@@ -1,0 +1,48 @@
+# Base stage for shared dependencies
+FROM python:3.11-slim AS base
+WORKDIR /app
+
+# 添加中国代理镜像源
+RUN echo 'deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware' > /etc/apt/sources.list.d/99fresh.sources.list \
+    && echo 'deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware' >> /etc/apt/sources.list.d/99fresh.sources.list \
+    && echo 'deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware' >> /etc/apt/sources.list.d/99fresh.sources.list
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    chromium \
+    chromium-driver \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Development stage
+FROM base AS development
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+COPY backend/requirements.txt .
+RUN pip config set global.extra-index-url "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+RUN pip install --no-cache-dir -r requirements.txt
+COPY backend/ .
+
+# Production stage
+FROM base AS production
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+COPY backend/requirements.txt .
+RUN pip config set global.extra-index-url "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY backend/ .
+
+# Create non-root user
+RUN useradd -m -U -s /bin/bash appuser && \
+    chown -R appuser:appuser /app /opt/venv
+
+USER appuser
+
+# Set runtime configuration
+ENV PYTHONUNBUFFERED=1
+EXPOSE 24125
+
