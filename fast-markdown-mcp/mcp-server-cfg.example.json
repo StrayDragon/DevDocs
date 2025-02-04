@@ -1,0 +1,12 @@
+{
+  "fast-markdown": {
+    "command": "uv",
+    "args": [
+      "run",
+      "--directory",
+      "~/Kits/Apps/dockered/mcpserver.devdocs/fast-markdown-mcp",
+      "~/Kits/Apps/dockered/mcpserver.devdocs/storage/markdown"
+    ],
+    "timeout": 300
+  }
+}
