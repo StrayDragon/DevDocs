@@ -5,6 +5,7 @@
       "run",
       "--directory",
       "~/Kits/Apps/dockered/mcpserver.devdocs/fast-markdown-mcp",
+      "fast-markdown-mcp",
       "~/Kits/Apps/dockered/mcpserver.devdocs/storage/markdown"
     ],
     "timeout": 300
