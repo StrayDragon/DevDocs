@@ -23,6 +23,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY backend/requirements.txt .
 RUN pip config set global.extra-index-url "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 RUN pip install --no-cache-dir -r requirements.txt
+RUN playwright install
+
 COPY backend/ .
 
 # Production stage
@@ -32,6 +34,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY backend/requirements.txt .
 RUN pip config set global.extra-index-url "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple"
 RUN pip install --no-cache-dir -r requirements.txt
+RUN playwright install
 
 # Copy application files
 COPY backend/ .
